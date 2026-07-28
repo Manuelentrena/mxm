@@ -1,11 +1,11 @@
 ---
 import { getCollection, render } from "astro:content";
-import BaseLayout from "../layouts/BaseLayout.astro";
 import HomeHero from "../components/HomeHero.astro";
 import ParkScene from "../components/ParkScene.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import TimelineSection from "../components/TimelineSection.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
 import "../styles/global.css";
 
 const timelineEntries = (await getCollection("timeline")).sort(
@@ -20,7 +20,7 @@ const timelineCards = await Promise.all(
 );
 ---
 
-<BaseLayout title="Our Story" description="记录我们一路走来的小小纪念站。">
+<BaseLayout title="M♥M" description="Un pequeño sitio conmemorativo de nuestro camino juntos.">
   <main class="page-shell" aria-label="Our Story love journal page">
     <section class="artboard">
       <div class="paper-noise"></div>

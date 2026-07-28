@@ -1,17 +1,17 @@
 ---
 import { getCollection } from "astro:content";
-import BaseLayout from "../layouts/BaseLayout.astro";
 import PhotosGrid from "../components/PhotosGrid.astro";
 import PhotosHero from "../components/PhotosHero.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
 import "../styles/global.css";
 
 const timelineEntries = (await getCollection("timeline")).sort(
   (a, b) => a.data.order - b.data.order,
 );
 
-// 每张图片独立成一个照片墙格子
+// Cada imagen forma una celda independiente del muro de fotos
 const photos = timelineEntries.flatMap((entry) =>
   entry.data.images.map((src) => ({
     image: src,
@@ -22,7 +22,7 @@ const photos = timelineEntries.flatMap((entry) =>
 );
 ---
 
-<BaseLayout title="照片墙 | Our Story" description="收藏我们一路走来的照片瞬间。">
+<BaseLayout title="Fotos | M♥M" description="Momentos fotográficos de nuestro camino juntos.">
   <main class="page-shell" aria-label="Our Story photos page">
     <section class="artboard photos-page">
       <div class="paper-noise"></div>
