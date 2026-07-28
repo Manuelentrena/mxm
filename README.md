@@ -1,211 +1,102 @@
-# Our Story
+# Manuel ♥ Mishelle
 
-![Our Story logo](public/assets/logo.png)
+Sitio conmemorativo hecho a mano con [Astro](https://astro.build): una portada con foto, contador de días juntos y línea de tiempo, más un muro de fotos.
 
-[![GitHub Repo](https://img.shields.io/badge/GitHub-huey1in%2Fourstory-181717?logo=github)](https://github.com/huey1in/ourstory)
-![Astro](https://img.shields.io/badge/Astro-7.x-ff5d01?logo=astro&logoColor=white)
-<a href="https://linux.do"><img src="https://img.shields.io/badge/LINUX%20DO-社区-f0b752?style=flat-square" alt="LINUX DO"></a>
-![Netlify](https://img.shields.io/badge/deploy-Netlify-00c7b7?logo=netlify&logoColor=white)
+Sitio: [manuelentrena.github.io/mxm](https://manuelentrena.github.io/mxm/)
 
-体验地址：[zhlyxh.com](https://zhlyxh.com)
+## Funcionalidad
 
-一个用 Astro 构建的双页纪念站。
+- Home `/`: foto de portada, decoración dibujada a mano, contador de días juntos, línea de tiempo, pie de página.
+- Muro de fotos `/photos`: reúne las fotos de `src/content/timeline/*.md`.
+- Vista previa (lightbox): las fotos se pueden ampliar con clic, cierran con clic afuera o `Esc`.
+- Navegación móvil con menú hamburguesa.
+- Transiciones de página con `ClientRouter` de Astro, precargando imágenes de la página destino.
+- Fotos servidas desde Cloudinary (`src/site.config.ts` → `cloudinaryUrl`), con `srcset` responsive.
+- Fuente cursiva (`Laura Cursive`) subseteada a WOFF2 para peso mínimo.
 
-
-## 功能
-
-- 首页 `/`：首屏合照、手绘装饰、在一起天数、时间线、页脚。
-- 照片墙 `/photos`：从 `src/content/timeline/*.md` 汇集照片。
-- 图片预览：照片墙图片可点击放大，支持背景点击关闭和 `Esc` 关闭。
-- 移动端导航：小屏幕使用汉堡菜单。
-- 页面切换：使用 Astro `ClientRouter`，并在切换前预热目标页面图片。
-- 视觉风格：纸张背景、拍立得照片、胶带、手绘圈选中状态、Laura Cursive 字体。
-- 品牌资源：站点 Logo 使用 `public/assets/logo.png`，浏览器标签图标使用 `public/favicon.png`。
-
-## 开发
+## Desarrollo
 
 ```bash
 npm install
 npm run dev
 ```
 
-常用命令：
+Comandos disponibles:
 
 ```bash
-npm run build
-npm run preview
+npm run dev       # servidor de desarrollo
+npm run build     # build de producción en dist/
+npm run preview   # sirve el build localmente
+npm run check     # chequeo de tipos de Astro
 ```
 
-项目当前只依赖 Astro。
+Requiere Node.js `>=22.12.0`.
 
-Node.js 版本要求：
+## Actualizar contenido
 
-```text
->=22.12.0
-```
-
-## 内容更新
-
-时间线内容放在：
+Cada entrada de la línea de tiempo es un archivo en:
 
 ```text
 src/content/timeline/
 ```
 
-新增一条记录时，可以复制模板：
-
-```text
-src/content/timeline/_template.md.example
-```
-
-复制后改名为 `.md`，例如：
-
-```text
-src/content/timeline/02-some-day.md
-```
-
-每条时间线需要这些字段：
+Para agregar una: copiá `src/content/timeline/_template.md.example`, renombralo a `NN-fecha.md` y completá el frontmatter:
 
 ```yaml
 ---
-order: 2
-date: 2024.10.12
-title: 我们的某一天
-image: /assets/photos/example.jpg
-alt: 这张照片的简短描述
+order: 23
+date: 2026.07.20
+title: Un día especial
+images:
+  - https://res.cloudinary.com/<cloud>/image/upload/v<version>/MxM/<archivo>.webp
+alt: Breve descripción de la foto
 side: right
 tilt: tilt-right-soft
 ---
 
-这里写这一天的故事。
+Acá va la historia de ese día.
 ```
 
-字段说明：
+- `order`: orden de aparición (menor = más adelante en la línea de tiempo).
+- `date`: fecha mostrada en la página.
+- `title`: título, también se usa en el muro de fotos.
+- `images`: una o más URLs de Cloudinary (array).
+- `alt`: descripción de la foto para accesibilidad.
+- `side`: posición de la tarjeta (`left` o `right`).
+- `tilt`: inclinación de la polaroid (`tilt-left`, `tilt-left-soft`, `tilt-right`, `tilt-right-soft`).
 
-- `order`：排序，数字越小越靠前。
-- `date`：页面显示的日期文本。
-- `title`：时间线标题，也会用于照片墙标题。
-- `image`：照片路径，通常放在 `public/assets/photos/`。
-- `alt`：图片说明。
-- `side`：时间线左右位置，支持 `left`、`right`。
-- `tilt`：拍立得倾斜样式，支持 `tilt-left`、`tilt-left-soft`、`tilt-right`、`tilt-right-soft`。
+El muro de fotos no necesita mantenimiento aparte: toma `images`, `date`, `title` y `alt` de cada entrada del timeline.
 
-照片墙不需要单独维护，它会读取时间线中的 `image`、`date`、`title` 和 `alt`。
+## Configuración del sitio
 
-## 项目配置
+`src/site.config.ts` centraliza:
 
-站点级配置在：
+- `copyright`: texto del pie de página.
+- `heroMedia`: foto e info de portada del home.
+- `relationship.startDate`: fecha de inicio para el contador de días.
+- `cloudinaryUrl()`: helper para construir URLs de Cloudinary con transformaciones (`w_`, `f_auto`, `q_auto`).
 
-```text
-src/site.config.ts
-```
+`site` y `base` (URL final y subruta de despliegue) están en `astro.config.mjs`.
 
-当前包含：
-
-- `copyright`：页脚版权信息。
-- `heroMedia.image`：首页首屏照片。
-- `heroMedia.caption`：首页首屏照片日期。
-- `relationship.startDate`：在一起天数的开始日期。
-
-Astro 站点地址配置在：
-
-```text
-astro.config.mjs
-```
-
-## 目录
+## Estructura
 
 ```text
 src/
-  components/        页面组件
-  content/timeline/  时间线 Markdown 内容
-  layouts/           基础 HTML 布局
-  pages/             路由页面
-  styles/            全局样式
-  site.config.ts     项目配置
+  components/        Componentes de página
+  content/timeline/  Contenido de la línea de tiempo (Markdown)
+  content.config.ts  Schema del content collection
+  layouts/           Layout base HTML
+  pages/             Rutas
+  styles/            Estilos globales
+  site.config.ts     Configuración del sitio
 
 public/
-  assets/
-    illustrations/   手绘插图
-    photos/          照片
-  fonts/             Laura Cursive 字体
+  assets/illustrations/  Ilustraciones dibujadas a mano
+  fonts/                  Fuente Laura Cursive (WOFF2 subseteado)
 ```
 
-## 部署
+Las fotos no viven en el repo: se alojan en Cloudinary y se referencian por URL desde el frontmatter.
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/huey1in/ourstory)
+## Despliegue
 
-仓库里已经包含 Netlify 配置：
-
-```text
-netlify.toml
-```
-
-配置会让 Netlify 使用 Node.js 22，执行 `npm run build`，并发布 `dist` 目录。
-
-### 首次部署
-
-1. 打开 Netlify Dashboard。
-2. 选择 `Add new site -> Import an existing project`。
-3. 连接 GitHub，并选择仓库：
-
-```text
-huey1in/OurStory
-```
-
-4. Netlify 会读取 `netlify.toml`，构建配置应为：
-
-```text
-Build command: npm run build
-Publish directory: dist
-Node version: 22
-```
-
-5. 点击 `Deploy`，等待构建完成。
-
-### 日常更新
-
-以后新增时间线、替换照片或调整配置后，只需要提交并推送：
-
-```bash
-git add .
-git commit -m "Update story content"
-git push
-```
-
-Netlify 会自动拉取最新代码并重新部署。
-
-### 自定义域名
-
-如果使用 `zhlyxh.com`，在 Netlify 中进入：
-
-```text
-Site configuration -> Domain management
-```
-
-添加自定义域名：
-
-```text
-zhlyxh.com
-```
-
-然后按 Netlify 提示到域名服务商处配置 DNS。正式域名也需要同步写在：
-
-```text
-astro.config.mjs
-```
-
-当前配置为：
-
-```js
-export default defineConfig({
-  site: "https://zhlyxh.com",
-});
-```
-
-### 部署排查
-
-- 如果构建失败，先在本地运行 `npm run build` 查看错误。
-- 如果提示 Node.js 版本不支持，确认 Netlify 使用的是 Node.js 22。
-- 如果页面没有更新，确认代码已经推送到 Netlify 连接的分支。
-- 如果图片没有显示，确认图片放在 `public/assets/photos/`，并且 Markdown 中使用 `/assets/photos/xxx.jpg` 这种路径。
+El sitio se publica en GitHub Pages vía GitHub Actions (`.github/workflows/deploy.yml`): cada push a `main` compila con `npm run build` y publica `dist/`.

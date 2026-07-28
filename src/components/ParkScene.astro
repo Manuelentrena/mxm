@@ -1,6 +1,10 @@
+---
+const illustrationsBase = `${import.meta.env.BASE_URL}assets/illustrations`;
+---
+
 <section class="park-scene" aria-hidden="true">
-  <img class="bottom-park-art bottom-park-left" src="/assets/illustrations/bottom-park-left.png" alt="" decoding="async" loading="lazy" />
-  <img class="bottom-park-art bottom-park-tree" src="/assets/illustrations/bottom-park-tree.png" alt="" decoding="async" loading="lazy" />
+  <img class="bottom-park-art bottom-park-left" src={`${illustrationsBase}/bottom-park-left.png`} alt="" decoding="async" loading="lazy" />
+  <img class="bottom-park-art bottom-park-tree" src={`${illustrationsBase}/bottom-park-tree.png`} alt="" decoding="async" loading="lazy" />
   <svg class="street-lamp" viewBox="0 0 92 198" aria-hidden="true">
     <g class="sketch-line">
       <path d="M47 62v105M43 62v105M36 167h19M39 181h14M31 190h32" />

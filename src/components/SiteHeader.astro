@@ -6,21 +6,21 @@ interface Props {
 const { active } = Astro.props;
 
 const navItems = [
-  { href: "/", label: "首页", key: "home" },
-  { href: "/photos", label: "照片墙", key: "photos" },
+  { href: import.meta.env.BASE_URL, label: "Inicio", key: "home" },
+  { href: `${import.meta.env.BASE_URL}photos`, label: "Fotos", key: "photos" },
 ] as const;
 ---
 
 <header class="topbar">
-  <a class="brand brand-link" href="/" aria-label="Our Story 首页">
-    <span class="brand-text">Our Story</span>
+  <a class="brand brand-link" href={import.meta.env.BASE_URL} aria-label="M♥M Inicio">
+    <span class="brand-text">M♥M</span>
   </a>
-  <button class="menu-toggle" type="button" aria-label="打开导航菜单" aria-expanded="false" aria-controls="site-nav">
+  <button class="menu-toggle" type="button" aria-label="Abrir menú de navegación" aria-expanded="false" aria-controls="site-nav">
     <span></span>
     <span></span>
     <span></span>
   </button>
-  <nav id="site-nav" class="nav" aria-label="页面导航">
+  <nav id="site-nav" class="nav" aria-label="Navegación de páginas">
     {navItems.map((item) => (
       <a class:list={["nav-link", `nav-${item.key}`, { active: active === item.key }]} href={item.href}>
         <span class="nav-label">{item.label}</span>
@@ -49,7 +49,7 @@ const navItems = [
       const nextExpanded = menuButton.getAttribute("aria-expanded") !== "true";
 
       menuButton.setAttribute("aria-expanded", String(nextExpanded));
-      menuButton.setAttribute("aria-label", nextExpanded ? "关闭导航菜单" : "打开导航菜单");
+      menuButton.setAttribute("aria-label", nextExpanded ? "Cerrar menú de navegación" : "Abrir menú de navegación");
       siteNav.classList.toggle("is-open", nextExpanded);
     });
   }
@@ -63,7 +63,7 @@ const navItems = [
     }
 
     menuButton.setAttribute("aria-expanded", "false");
-    menuButton.setAttribute("aria-label", "打开导航菜单");
+    menuButton.setAttribute("aria-label", "Abrir menú de navegación");
     siteNav.classList.remove("is-open");
   });
 </script>
