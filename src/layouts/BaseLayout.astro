@@ -2,29 +2,29 @@
 import { ClientRouter } from "astro:transitions";
 
 const {
-  title = "Our Story",
-  description = "A handwritten memorial site built with Astro.",
+  title = "M♥M",
+  description = "Un sitio web hecho a mano con Astro.",
 } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="zh-CN">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
-    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="icon" type="image/png" href={`${import.meta.env.BASE_URL}favicon.png`} />
     <link
       rel="preload"
-      href="/fonts/Laura%20Cursive.otf"
+      href={`${import.meta.env.BASE_URL}fonts/laura-cursive.woff2`}
       as="font"
-      type="font/otf"
+      type="font/woff2"
       crossorigin
     />
     <title>{title}</title>
     <ClientRouter fallback="animate" />
     <script is:inline>
-      // 首次加载时立即在 <html> 上标记骨架屏状态，避免字体就绪前露出文字
+      // En la primera carga marca de inmediato el estado skeleton en <html>, evita mostrar texto antes de que la fuente esté lista
       if (!window.__pgFontsReady) {
         document.documentElement.classList.add("fonts-loading");
 
@@ -40,10 +40,11 @@ const {
 
         const timer = setTimeout(finish, MAX_WAIT_MS);
 
-        // 骨架屏把文字设为透明，浏览器会认为没有可见字形需要该字体，
-        // 于是根本不去下载它，document.fonts.ready 立刻 resolve → 骨架屏提前移除、
-        // 露出回退字体，随后 web 字体才加载并替换，造成字体闪烁。
-        // 这里显式触发字体下载，并等待「该字体」真正就绪。
+        // El skeleton pone el texto transparente, el navegador cree que no hay glifos visibles
+        // que necesiten esa fuente, así que no la descarga, document.fonts.ready resuelve enseguida,
+        // el skeleton se quita antes de tiempo, aparece la fuente de respaldo y luego la fuente web
+        // carga y la reemplaza, provocando parpadeo de fuente (FOUT).
+        // Aquí se fuerza la descarga de la fuente y se espera a que esté realmente lista.
         const fontsReady =
           document.fonts && typeof document.fonts.load === "function"
             ? document.fonts
@@ -54,7 +55,7 @@ const {
 
         fontsReady.then(() => {
           clearTimeout(timer);
-          // 双 rAF：确保浏览器已用新字体完成首帧绘制，再移除骨架屏
+          // Doble rAF: asegura que el navegador ya pintó el primer frame con la nueva fuente antes de quitar el skeleton
           requestAnimationFrame(() => requestAnimationFrame(finish));
         });
       }

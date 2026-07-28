@@ -1,22 +1,23 @@
 :root {
-  --paper: #f8efe4;
-  --paper-deep: #f1e4d5;
-  --ink: #211f1b;
-  --soft-ink: #6c6157;
-  --line: #6e665c;
-  --rose: #d9968c;
-  --tape: rgba(222, 189, 139, 0.5);
+  --paper: #F5EEFA;
+  --paper-deep: #ffdcdc;
+  --ink: #3A2945;
+  --soft-ink: #78647F;
+  --line: #B47A9C;
+  --rose: #8f4ae8;
+  --tape: rgba(191, 81, 242, 0.5);
   --max-page: 1180px;
   --gutter: clamp(18px, 4vw, 56px);
 }
 
 @font-face {
   font-family: "Laura Cursive";
-  /* 直接加载完整 otf。文件名含空格，URL 必须编码为 %20，否则部分服务器请求失败。 */
-  src: url("/fonts/Laura%20Cursive.otf") format("opentype");
+  /* Ruta absoluta: debe incluir el mismo `base` que astro.config.mjs (CSS no tiene acceso a import.meta.env). */
+  src: url("/mxm/fonts/laura-cursive.woff2") format("woff2");
   font-style: normal;
   font-weight: 400;
   font-display: block;
+  unicode-range: U+0000-00FF, U+0100-017F, U+2018-201E, U+2026, U+2039-203A, U+2660-2667;
 }
 
 /* ── Skeleton screen ─────────────────────────────────────────────────────── */
@@ -58,7 +59,7 @@ html.fonts-loading .footer-bottom p {
   user-select: none;
 }
 
-/* 字体加载完毕后文字淡入 */
+/* El texto aparece con fade una vez cargada la fuente */
 html.fonts-loaded .brand-text,
 html.fonts-loaded .nav-label,
 html.fonts-loaded .hero-copy h1,
@@ -91,7 +92,7 @@ html.fonts-loaded .footer-bottom p {
 html {
   scroll-behavior: smooth;
   background: #e9ded0;
-  /* 始终预留滚动条宽度：打开灯箱锁滚动时不再因滚动条消失而横向偏移 */
+  /* Reserva siempre el ancho de la barra de scroll: al abrir el lightbox y bloquear el scroll no hay desplazamiento horizontal por su desaparición */
   scrollbar-gutter: stable;
 }
 
@@ -99,9 +100,9 @@ html.has-photo-lightbox,
 html.has-photo-lightbox body {
   overflow: hidden;
 }
-/* 移动端 overflow:hidden 挡不住触摸滚动，改用固定 body（top 由 JS 设置）。
-   注意：不能用 inset:0，其 bottom:0 会与 JS 设的负 top 冲突、把 body 高度拉伸，
-   关闭恢复滚动时定位错乱。只固定 top/left/right，高度由内容决定。 */
+/* En móvil overflow:hidden no bloquea el scroll táctil, se usa body fijo en su lugar (top lo pone JS).
+   Ojo: no usar inset:0, su bottom:0 chocaría con el top negativo de JS y estiraría la altura del body,
+   causando mala posición al restaurar el scroll al cerrar. Solo se fija top/left/right, la altura la da el contenido. */
 html.has-photo-lightbox body {
   position: fixed;
   top: 0;
@@ -158,7 +159,7 @@ body {
     radial-gradient(circle at 84% 34%, rgba(244, 225, 207, 0.42), transparent 36%),
     linear-gradient(180deg, #eaded0 0%, #dfcfbe 100%);
   color: var(--ink);
-  font-family: "Laura Cursive", "STKaiti", "KaiTi", serif;
+  font-family: "Laura Cursive", serif;
   font-synthesis: none;
 }
 
@@ -401,15 +402,6 @@ h3 span,
   letter-spacing: 0;
 }
 
-.hero-copy h1::after {
-  content: "♡";
-  display: inline-block;
-  margin-left: 18px;
-  color: var(--rose);
-  font-size: 0.76em;
-  transform: rotate(-12deg);
-}
-
 .hero-copy p {
   max-width: 440px;
   margin: 24px 0 0;
@@ -417,6 +409,17 @@ h3 span,
   font-size: clamp(18px, 2vw, 25px);
   font-weight: 600;
   line-height: 1.55;
+}
+
+.hero-subtitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hero-subtitle p,
+.hero-subtitle .days {
+  margin: 0;
 }
 
 .doodle-couple {
@@ -552,7 +555,7 @@ h3 span,
   aspect-ratio: 1.13;
 }
 
-/* 缩略图加载指示器：默认可见，图片就绪后（.img-loaded）淡出 */
+/* Indicador de carga de miniatura: visible por defecto, se desvanece cuando la imagen está lista (.img-loaded) */
 .thumb-spinner {
   position: absolute;
   top: 50%;
@@ -658,7 +661,7 @@ h3 span,
 .sprig-line,
 .sketch-line {
   fill: none;
-  stroke: #4d5045;
+  stroke: #8f4ae8;
   stroke-width: 1.25;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -671,12 +674,12 @@ h3 span,
 }
 
 .love-note {
-  position: absolute;
-  right: clamp(36px, 9vw, 168px);
-  bottom: clamp(34px, 5vw, 72px);
-  color: #514840;
-  font-size: clamp(22px, 3vw, 36px);
-  transform: rotate(-8deg);
+  position: relative;
+  margin: 10px 0 0 8px;
+  color: var(--rose);
+  font-size: clamp(18px, 2vw, 26px);
+  font-weight: 600;
+  transform: rotate(-3deg);
   z-index: 4;
 }
 
@@ -703,7 +706,7 @@ h3 span,
   right: 28px;
   bottom: -10px;
   height: 11px;
-  background: rgba(226, 151, 143, 0.27);
+  background: rgba(216, 51, 253, 0.27);
   transform: rotate(-2deg);
   z-index: -1;
 }
@@ -822,7 +825,7 @@ h3 span,
 .future {
   width: max-content;
   margin: clamp(44px, 5vw, 68px) auto 0;
-  color: #3d352f;
+  color: var(--ink);
   font-size: clamp(20px, 2.2vw, 30px);
   font-weight: 600;
   line-height: 1.65;
@@ -1063,7 +1066,7 @@ h3 span,
   height: 44px;
   padding: 0;
   color: var(--ink);
-  font-family: "Laura Cursive", "STKaiti", "KaiTi", serif;
+  font-family: "Laura Cursive", serif;
   font-size: 34px;
   line-height: 1;
   border: 2px solid var(--ink);
@@ -1197,7 +1200,7 @@ h3 span,
   color: var(--rose);
 }
 
-/* ── 时间线多图堆叠 ────────────────────────────────────────────────────────── */
+/* ── Pila de varias fotos en la línea de tiempo ────────────────────────────────────────────────────────── */
 .photo-stack {
   position: relative;
   flex: 0 0 240px;
@@ -1209,7 +1212,7 @@ h3 span,
   width: 240px;
 }
 
-/* 第2、3张绝对定位叠在第1张后面 */
+/* La 2ª y 3ª foto se posicionan absolutas detrás de la 1ª */
 .photo-stack .stack-item:not(.stack-1) {
   position: absolute;
   top: 0;
@@ -1220,7 +1223,7 @@ h3 span,
 .photo-stack .stack-2 { z-index: 2; transform: rotate(-5.5deg) translate(-3px, 4px); }
 .photo-stack .stack-3 { z-index: 1; transform: rotate(4deg)   translate(4px, -3px); }
 
-/* 可点击进入 lightbox 的照片 */
+/* Fotos clicables que abren el lightbox */
 [data-lightbox] {
   cursor: pointer;
 }
@@ -1238,7 +1241,7 @@ h3 span,
   transform: translateY(-3px) scale(1.02);
 }
 
-/* 右下角照片数量标签 */
+/* Etiqueta de cantidad de fotos en la esquina inferior derecha */
 .stack-count {
   position: absolute;
   right: -6px;
@@ -1249,14 +1252,14 @@ h3 span,
   border: 1px solid rgba(110, 96, 78, 0.32);
   border-radius: 999px;
   color: var(--soft-ink);
-  font-family: "Laura Cursive", "STKaiti", "KaiTi", serif;
+  font-family: "Laura Cursive", serif;
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.5px;
   pointer-events: none;
 }
 
-/* ── Lightbox 大图查看 ─────────────────────────────────────────────────────── */
+/* ── Vista ampliada en el lightbox ─────────────────────────────────────────────────────── */
 .lightbox {
   position: fixed;
   inset: 0;
@@ -1280,13 +1283,13 @@ h3 span,
   backdrop-filter: blur(5px);
 }
 
-/* 未打开时真正隐藏：否则 display:grid 会覆盖 [hidden]，
-   透明遮罩仍铺满全屏截获点击，导致照片点不动 */
+/* Oculto de verdad cuando no está abierto: si no, display:grid sobreescribiría [hidden]
+   y el overlay transparente seguiría cubriendo toda la pantalla capturando clics, bloqueando las fotos */
 .lightbox[hidden] {
   display: none;
 }
 
-/* 相框：复用照片墙全屏预览的白边 + 胶带外观（.photo-lightbox-frame） */
+/* Marco: reutiliza el borde blanco + look de cinta adhesiva de la vista previa a pantalla completa del muro de fotos (.photo-lightbox-frame) */
 .lb-frame {
   position: relative;
   width: 100%;
@@ -1294,6 +1297,7 @@ h3 span,
   max-height: 88dvh;
   margin: 0;
   padding: clamp(12px, 1.8vw, 18px) clamp(12px, 1.8vw, 18px) clamp(48px, 5vw, 66px);
+  padding-bottom: 100px;
   background: rgba(255, 253, 247, 0.96);
   border: 1px solid rgba(83, 73, 62, 0.22);
   box-shadow:
@@ -1321,7 +1325,7 @@ h3 span,
   z-index: 2;
 }
 
-/* 加载指示器：居中于相框，图片就绪后淡出 */
+/* Indicador de carga: centrado en el marco, se desvanece cuando la imagen está lista */
 .lb-spinner {
   position: absolute;
   top: 50%;
@@ -1368,7 +1372,7 @@ h3 span,
   justify-content: space-between;
   gap: 18px;
   color: #4d443c;
-  font-family: "Laura Cursive", "STKaiti", "KaiTi", serif;
+  font-family: "Laura Cursive", serif;
   font-size: clamp(18px, 2vw, 26px);
   font-weight: 600;
   letter-spacing: 1px;
@@ -1386,7 +1390,7 @@ h3 span,
   text-align: left;
 }
 
-/* 多图计数器：靠右，弱化处理 */
+/* Contador de varias fotos: alineado a la derecha, estilo atenuado */
 .lb-counter {
   color: rgba(77, 68, 60, 0.6);
   font-size: 0.72em;
@@ -1425,10 +1429,10 @@ h3 span,
   background: var(--paper);
 }
 .lb-nav:active { transform: translateY(-50%) scale(0.9); }
-/* JS 用 hidden 属性隐藏单张照片的左右切换，需覆盖上面的 display: grid */
+/* JS usa el atributo hidden para ocultar la navegación izq/der en fotos únicas, hay que sobreescribir el display: grid de arriba */
 .lb-nav[hidden] { display: none; }
 
-/* 复用照片墙全屏预览的关闭按钮样式（手绘感不规则圆角 + 米色描边） */
+/* Reutiliza el estilo del botón cerrar de la vista previa a pantalla completa del muro de fotos (esquinas irregulares dibujadas a mano + borde beige) */
 .lb-close {
   position: fixed;
   top: clamp(18px, 3vw, 34px);
@@ -1445,7 +1449,7 @@ h3 span,
   display: grid;
   place-items: center;
   color: var(--ink);
-  font-family: "Laura Cursive", "STKaiti", "KaiTi", serif;
+  font-family: "Laura Cursive", serif;
   font-size: 34px;
   line-height: 1;
   border: 2px solid var(--ink);
@@ -1466,7 +1470,7 @@ h3 span,
     width: 100%;
     max-width: none;
     max-height: 92dvh;
-    padding-bottom: 76px;
+    padding-bottom: 110px;
     transform: rotate(0deg) scale(0.94);
   }
   .lightbox.open .lb-frame {
@@ -1532,8 +1536,7 @@ h3 span,
 }
 
 .footer-bottom {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, max-content));
+  display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 18px;
@@ -1583,11 +1586,6 @@ h3 span,
     right: -44px;
     bottom: 14px;
     width: 92px;
-  }
-
-  .love-note {
-    right: 8vw;
-    bottom: 24px;
   }
 
   .timeline-line {
@@ -1713,20 +1711,12 @@ h3 span,
   }
 
   .doodle-couple {
-    margin-top: 28px;
+    margin-top: 5px;
   }
 
   .generated-flower,
   .flower-sprig {
     display: none;
-  }
-
-  .love-note {
-    position: relative;
-    right: auto;
-    bottom: auto;
-    width: max-content;
-    margin: 10px 0 0 auto;
   }
 
   .rotate-hero,
@@ -1834,7 +1824,7 @@ h3 span,
   }
 
   .footer-bottom {
-    grid-template-columns: 1fr;
+    flex-direction: column;
   }
 
   .footer-links {
