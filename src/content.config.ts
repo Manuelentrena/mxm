@@ -7,7 +7,7 @@ const timeline = defineCollection({
     order: z.coerce.number().int().nonnegative(),
     date: z.string(),
     title: z.string(),
-    images: z.array(z.string()).min(1),
+    images: z.array(z.string().url()).min(1),
     alt: z.string().default(""),
     side: z.enum(["left", "right"]),
     tilt: z.enum(["tilt-left", "tilt-left-soft", "tilt-right", "tilt-right-soft"]),

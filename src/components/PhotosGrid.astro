@@ -1,4 +1,6 @@
 ---
+import { cloudinaryUrl } from "../site.config";
+
 interface Photo {
   image: string;
   alt: string;
@@ -11,23 +13,36 @@ interface Props {
 }
 
 const { photos } = Astro.props;
+
+const GRID_WIDTHS = [300, 450, 700, 1000];
+const GRID_SIZES = "(max-width: 640px) 100vw, (max-width: 920px) 50vw, 33vw";
 ---
 
-<section class="photos-wall" aria-label="照片墙">
+<section class="photos-wall" aria-label="Muro de fotos">
   {photos.map((photo, index) => (
     <article class={`photo-tile photo-tile-${(index % 4) + 1}`}>
       <figure>
         <button
           class="photo-open"
           type="button"
-          aria-label={`放大查看：${photo.title}`}
+          aria-label={`Ampliar: ${photo.title}`}
           data-photo-open
-          data-photo-src={photo.image}
+          data-photo-src={cloudinaryUrl(photo.image, "w_1600,f_auto,q_auto")}
           data-photo-alt={photo.alt}
           data-photo-date={photo.date}
           data-photo-title={photo.title}
         >
-          <img src={photo.image} alt={photo.alt} decoding="async" loading={index < 6 ? "eager" : "lazy"} />
+          <img
+            src={cloudinaryUrl(photo.image, "w_700,f_auto,q_auto")}
+            srcset={GRID_WIDTHS.map(
+              (w) => `${cloudinaryUrl(photo.image, `w_${w},f_auto,q_auto`)} ${w}w`,
+            ).join(", ")}
+            sizes={GRID_SIZES}
+            alt={photo.alt}
+            decoding="async"
+            loading={index < 6 ? "eager" : "lazy"}
+            fetchpriority={index === 0 ? "high" : undefined}
+          />
         </button>
       </figure>
       <div>
@@ -39,7 +54,7 @@ const { photos } = Astro.props;
 </section>
 
 <div class="photo-lightbox" data-photo-lightbox hidden>
-  <button class="photo-lightbox-close" type="button" data-photo-close aria-label="关闭照片预览">
+  <button class="photo-lightbox-close" type="button" data-photo-close aria-label="Cerrar vista previa de foto">
     &times;
   </button>
   <figure class="photo-lightbox-frame">
@@ -54,7 +69,7 @@ const { photos } = Astro.props;
 <script>
   function initPhotoLightbox() {
     const lightbox = document.querySelector("[data-photo-lightbox]");
-    // 遮罩每次导航都会被换成新节点：已绑定过的直接跳过，避免重复挂载
+    // El overlay se reemplaza por un nodo nuevo en cada navegación: si ya está enlazado, se omite para evitar montarlo dos veces
     if (!(lightbox instanceof HTMLElement) || lightbox.dataset.bound) return;
     lightbox.dataset.bound = "1";
 
@@ -69,8 +84,8 @@ const { photos } = Astro.props;
     const closeLightbox = () => {
       lightbox.hidden = true;
       document.documentElement.classList.remove("has-photo-lightbox");
-      // 解除 body 固定并恢复滚动位置（见 CSS 中的 has-photo-lightbox 规则）。
-      // 临时关掉 scroll-behavior:smooth，否则会从顶部平滑滚动、定位不准。
+      // Libera el body fijado y restaura la posición de scroll (ver regla has-photo-lightbox en CSS).
+      // Desactiva temporalmente scroll-behavior:smooth, si no el scroll animaría desde arriba con posición incorrecta.
       document.body.style.top = "";
       const html = document.documentElement;
       const prevBehavior = html.style.scrollBehavior;
@@ -95,7 +110,7 @@ const { photos } = Astro.props;
         lightboxDate.textContent = button.dataset.photoDate ?? "";
         lightboxTitle.textContent = button.dataset.photoTitle ?? "";
         lightbox.hidden = false;
-        // 固定 body 防止移动端触摸滚动穿透（记录并锁定当前滚动位置）
+        // Fija el body para evitar que el scroll táctil móvil atraviese el overlay (guarda y bloquea la posición actual)
         savedScrollY = window.scrollY;
         document.body.style.top = `-${savedScrollY}px`;
         document.documentElement.classList.add("has-photo-lightbox");
@@ -112,7 +127,7 @@ const { photos } = Astro.props;
     });
   }
 
-  // Esc 关闭：只在 document 上绑定一次，动态查当前遮罩，避免多次导航后监听泄漏
+  // Cierre con Esc: se enlaza una sola vez en document, busca el overlay actual dinámicamente, evita fugas de listeners tras varias navegaciones
   if (!document.body.dataset.photoLightboxEsc) {
     document.body.dataset.photoLightboxEsc = "1";
     document.addEventListener("keydown", (event) => {
@@ -121,7 +136,7 @@ const { photos } = Astro.props;
       if (lb instanceof HTMLElement && !lb.hidden) {
         lb.hidden = true;
         document.documentElement.classList.remove("has-photo-lightbox");
-        // 与 closeLightbox 一致：解除 body 固定并恢复滚动位置
+        // Igual que closeLightbox: libera el body fijado y restaura la posición de scroll
         const y = Math.abs(parseInt(document.body.style.top || "0", 10)) || 0;
         document.body.style.top = "";
         const html = document.documentElement;

@@ -1,5 +1,6 @@
 ---
 import type { AstroComponentFactory } from "astro/runtime/server/index.js";
+import { cloudinaryUrl } from "../site.config";
 
 interface TimelineCard {
   entry: {
@@ -22,10 +23,15 @@ interface Props {
 const { timelineCards } = Astro.props;
 
 const STACK_LIMIT = 3;
+const THUMB_WIDTHS = [240, 480];
+
+function fullSrc(src: string) {
+  return cloudinaryUrl(src, "w_1600,f_auto,q_auto");
+}
 ---
 
 <section id="timeline" class="timeline-section">
-  <h2>时间线<span>♡</span></h2>
+  <h2>Línea de tiempo<span>♡</span></h2>
   <div class="timeline-line" aria-hidden="true">
     <span class="node n1"></span>
     <span class="node n2"></span>
@@ -37,17 +43,33 @@ const STACK_LIMIT = 3;
     const stackImgs = images.slice(0, STACK_LIMIT);
     const hasStack = images.length > 1;
 
+    const renderThumb = (src: string, thumbAlt: string) => {
+      const srcset = THUMB_WIDTHS.map(
+        (w) => `${cloudinaryUrl(src, `w_${w},f_auto,q_auto`)} ${w}w`,
+      ).join(", ");
+      return (
+        <img
+          src={cloudinaryUrl(src, "w_240,f_auto,q_auto")}
+          srcset={srcset}
+          sizes="240px"
+          alt={thumbAlt}
+          decoding="async"
+          loading="lazy"
+        />
+      );
+    };
+
     const photoBlock = (tapeSide: "left" | "right") => hasStack ? (
       <div
         class={`photo-stack ${tilt}`}
         data-lightbox
-        data-images={JSON.stringify(images)}
+        data-images={JSON.stringify(images.map(fullSrc))}
         data-alt={alt}
         data-date={date}
         data-title={title}
         role="button"
         tabindex="0"
-        aria-label={`查看「${title}」的 ${images.length} 张照片`}
+        aria-label={`Ver ${images.length} fotos de "${title}"`}
       >
         {stackImgs.map((src, i) => (
           <figure
@@ -56,28 +78,28 @@ const STACK_LIMIT = 3;
           >
             {i === 0 && <span class={`tape tape-corner-${tapeSide}`}></span>}
             <span class="thumb-spinner" aria-hidden="true"></span>
-            <img src={src} alt={i === 0 ? alt : ""} decoding="async" loading="lazy" />
-            {i === 0 && <figcaption><span>♡</span></figcaption>}
+            {renderThumb(src, i === 0 ? alt : "")}
+            <span class="stack-count" aria-hidden="true">{images.length} fotos</span>
           </figure>
         ))}
-        <span class="stack-count" aria-hidden="true">{images.length} 张</span>
+
       </div>
     ) : (
       <figure
         class={`polaroid small-photo ${tilt}`}
         data-lightbox
-        data-images={JSON.stringify(images)}
+        data-images={JSON.stringify(images.map(fullSrc))}
         data-alt={alt}
         data-date={date}
         data-title={title}
         role="button"
         tabindex="0"
-        aria-label={`查看「${title}」的照片`}
+        aria-label={`Ver foto de "${title}"`}
       >
         <span class={`tape tape-corner-${tapeSide}`}></span>
         <span class="thumb-spinner" aria-hidden="true"></span>
-        <img src={stackImgs[0]} alt={alt} decoding="async" loading="lazy" />
-        <figcaption><span>♡</span></figcaption>
+        {renderThumb(stackImgs[0], alt)}
+        <span class="stack-count" aria-hidden="true">1 foto</span>
       </figure>
     );
 
@@ -87,16 +109,16 @@ const STACK_LIMIT = 3;
           <>
             {photoBlock("left")}
             <div class="memory-card">
-              <time>{date}</time>
-              <h3>{title} <span>♡</span></h3>
+              <time>{date} ♡</time>
+              <h3>{title}</h3>
               <Content />
             </div>
           </>
         ) : (
           <>
             <div class="memory-card">
-              <time>{date}</time>
-              <h3>{title} <span>♡</span></h3>
+              <time>{date} ♡</time>
+              <h3>{title}</h3>
               <Content />
             </div>
             {photoBlock("right")}
@@ -107,15 +129,15 @@ const STACK_LIMIT = 3;
   })}
 
   <p class="future">
-    未来的每一天，<br />
-    都想和你一起度过。<span>♡</span>
+    Cada día del futuro,<br />
+    quiero pasarlo contigo.<span>♡</span>
   </p>
 </section>
 
-{/* ── Lightbox 遮罩（全站一个，复用） ─────────────────────────────────────── */}
-<div id="lightbox" class="lightbox" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-label="照片查看">
-  <button class="lb-close" data-lb-close aria-label="关闭">&times;</button>
-  <button class="lb-nav lb-prev" data-lb-prev aria-label="上一张">&#8249;</button>
+{/* ── Overlay del lightbox (uno solo para todo el sitio, reutilizado) ─────────────────────────────────────── */}
+<div id="lightbox" class="lightbox" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-label="Ver foto">
+  <button class="lb-close" data-lb-close aria-label="Cerrar">&times;</button>
+  <button class="lb-nav lb-prev" data-lb-prev aria-label="Anterior">&#8249;</button>
   <figure class="lb-frame">
     <span class="lb-spinner" data-lb-spinner aria-hidden="true"></span>
     <img class="lb-img" data-lb-img src="" alt="" />
@@ -125,7 +147,7 @@ const STACK_LIMIT = 3;
       <span class="lb-counter" data-lb-counter></span>
     </figcaption>
   </figure>
-  <button class="lb-nav lb-next" data-lb-next aria-label="下一张">&#8250;</button>
+  <button class="lb-nav lb-next" data-lb-next aria-label="Siguiente">&#8250;</button>
 </div>
 
 <script>
@@ -148,24 +170,24 @@ const STACK_LIMIT = 3;
     let idx = 0;
     let lastTrigger: HTMLElement | null = null;
 
-    // 图片加载完成/失败时收起加载指示器（缓存命中也会触发 load）
+    // Oculta el indicador de carga cuando la imagen termina de cargar o falla (un hit de caché también dispara load)
     imgEl.addEventListener("load", () => stage.classList.remove("is-loading"));
     imgEl.addEventListener("error", () => stage.classList.remove("is-loading"));
 
     const render = () => {
       stage.classList.add("is-loading");
       imgEl.src = images[idx];
-      // 若已在缓存中（complete 立即为 true），直接收起指示器，避免闪一下
+      // Si ya está en caché (complete es true de inmediato), oculta el indicador directamente para evitar un parpadeo
       if (imgEl.complete && imgEl.naturalWidth > 0) {
         stage.classList.remove("is-loading");
       }
-      imgEl.alt = images.length > 1 ? `${alt}（${idx + 1}）` : alt;
+      imgEl.alt = images.length > 1 ? `${alt} (${idx + 1})` : alt;
       counterEl.textContent =
         images.length > 1 ? `${idx + 1} / ${images.length}` : "";
       const multi = images.length > 1;
       btnPrev.hidden = !multi;
       btnNext.hidden = !multi;
-      // 预加载相邻图片
+      // Precarga las imágenes vecinas
       [idx + 1, idx - 1].forEach((n) => {
         const src = images[(n + images.length) % images.length];
         if (src) new Image().src = src;
@@ -185,7 +207,7 @@ const STACK_LIMIT = 3;
       render();
       lb.hidden = false;
       lb.setAttribute("aria-hidden", "false");
-      // 固定 body 防止移动端触摸滚动穿透（记录并锁定当前滚动位置）
+      // Fija el body para evitar que el scroll táctil móvil atraviese el overlay (guarda y bloquea la posición actual)
       savedScrollY = window.scrollY;
       document.body.style.top = `-${savedScrollY}px`;
       document.documentElement.classList.add("has-photo-lightbox");
@@ -197,7 +219,7 @@ const STACK_LIMIT = 3;
       lb.classList.remove("open");
       document.documentElement.classList.remove("has-photo-lightbox");
       document.body.style.top = "";
-      // 临时关掉 html 的 scroll-behavior:smooth，否则恢复滚动会从顶部平滑滚动、定位不准
+      // Desactiva temporalmente scroll-behavior:smooth en html, si no al restaurar el scroll animaría desde arriba con posición incorrecta
       const html = document.documentElement;
       const prevBehavior = html.style.scrollBehavior;
       html.style.scrollBehavior = "auto";
@@ -217,7 +239,7 @@ const STACK_LIMIT = 3;
       render();
     };
 
-    // 绑定所有触发器
+    // Enlaza todos los disparadores
     document.querySelectorAll<HTMLElement>("[data-lightbox]").forEach((el) => {
       if (el.dataset.lbBound) return;
       el.dataset.lbBound = "1";
@@ -234,7 +256,7 @@ const STACK_LIMIT = 3;
     btnPrev.addEventListener("click", (e) => { e.stopPropagation(); go(-1); });
     btnNext.addEventListener("click", (e) => { e.stopPropagation(); go(1); });
 
-    // 时间线缩略图：加载完成前显示指示器
+    // Miniaturas de la línea de tiempo: muestra el indicador hasta que termine de cargar
     document.querySelectorAll<HTMLImageElement>(
       ".small-photo img",
     ).forEach((img) => {
@@ -248,7 +270,7 @@ const STACK_LIMIT = 3;
       }
     });
 
-    // 点击遮罩空白处关闭
+    // Cierra al hacer clic en el espacio vacío del overlay
     lb.addEventListener("click", (e) => {
       if (e.target === lb) close();
     });
@@ -260,7 +282,7 @@ const STACK_LIMIT = 3;
       else if (e.key === "ArrowLeft") go(-1);
     });
 
-    // 移动端左右滑动
+    // Deslizamiento horizontal en móvil
     let touchX = 0;
     lb.addEventListener("touchstart", (e) => { touchX = e.touches[0].clientX; }, { passive: true });
     lb.addEventListener("touchend", (e) => {

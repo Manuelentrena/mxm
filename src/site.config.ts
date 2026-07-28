@@ -1,13 +1,19 @@
 const dayMs = 24 * 60 * 60 * 1000;
 
 export const siteConfig = {
-  copyright: "© 2026 zhlyxh.com All rights reserved.",
+  copyright: {
+    text: "© 2026 ",
+    linkText: "entrena.dev",
+    linkUrl: "https://entrena.dev",
+    suffix: " Todos los derechos reservados.",
+  },
   heroMedia: {
-    image: "/assets/photos/2026_06_17_17_49_59_IMG_9752.JPG",
-    caption: "2026.6.17"
+    image: "https://res.cloudinary.com/manuelentrena/image/upload/v1785241205/MxM/hero_s87bgk.webp",
+    caption: "2026.5.30",
+    imageAlt: "Una foto de nosotros juntos, sonriendo y felices.",
   },
   relationship: {
-    startDate: "2025-9-12",
+    startDate: "2026-2-04",
   },
 } as const;
 
@@ -25,4 +31,8 @@ export function getTogetherDays(referenceDate = new Date()) {
 
 export function formatDateLabel(date = siteConfig.relationship.startDate) {
   return date.replaceAll("-", ".");
+}
+
+export function cloudinaryUrl(url: string, transform: string) {
+  return url.replace("/upload/", `/upload/${transform}/`);
 }

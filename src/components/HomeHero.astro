@@ -1,21 +1,31 @@
 ---
-import { getTogetherDays, siteConfig } from "../site.config";
+import { cloudinaryUrl, getTogetherDays, siteConfig } from "../site.config";
 
 const togetherDays = getTogetherDays();
 const heroMedia = siteConfig.heroMedia;
-const heroFlowerImage = "/assets/illustrations/flower-sprig.png";
+const heroFlowerImage = `${import.meta.env.BASE_URL}assets/illustrations/flower-sprig.png`;
+
+const heroWidths = [400, 600, 860];
+const heroSrcset = heroWidths
+  .map((w) => `${cloudinaryUrl(heroMedia.image, `w_${w},f_auto,q_auto`)} ${w}w`)
+  .join(", ");
 ---
 
 <section class="hero-section" aria-labelledby="hero-title">
   <div id="story" class="hero-copy">
     <h1 id="hero-title">
-      因为是你，
+      CADA DÍA,
       <br />
-      所以每天都很美好。
+      ÚNICO Y ESPECIAL.
     </h1>
-    <p>一起走过的每一天，都是独一无二的回忆。</p>
+    <div class="hero-subtitle">
+      <p>Nuestra historia de amor.</p>
+      <div class="days">
+        <em data-together-days>{togetherDays}</em> días unidos.
+      </div>
+    </div>
     <div class="doodle-couple" aria-hidden="true">
-      <img class="generated-couple" src="/assets/illustrations/couple-doodle.png" alt="" />
+      <img class="generated-couple" src={`${import.meta.env.BASE_URL}assets/illustrations/couple-doodle.png`} alt="" />
       <svg viewBox="0 0 150 70" role="img">
         <g class="sketch-line">
           <path d="M19 45c-6-3-10-9-10-17 0-11 9-19 20-19 12 0 22 8 22 20 0 8-4 14-10 17" />
@@ -30,16 +40,24 @@ const heroFlowerImage = "/assets/illustrations/flower-sprig.png";
       </svg>
       <span class="mini-heart">♡</span>
     </div>
-    <div class="days">
-      在一起的第 <em data-together-days>{togetherDays}</em> 天
-    </div>
   </div>
 
   <div class="hero-media-stack">
     <figure class="polaroid hero-photo rotate-hero">
       <span class="tape tape-top"></span>
-      <img src={heroMedia.image} alt={heroMedia.imageAlt} decoding="async" fetchpriority="high" />
+      <img
+        src={cloudinaryUrl(heroMedia.image, "w_860,f_auto,q_auto")}
+        srcset={heroSrcset}
+        sizes="(max-width: 920px) 86vw, 430px"
+        alt={heroMedia.imageAlt}
+        decoding="async"
+        loading="eager"
+        fetchpriority="high"
+      />
       <figcaption>{heroMedia.caption} <span>♡</span></figcaption>
+      <div class="love-note">
+        Mishelle <span>♡</span> Manu
+      </div>
     </figure>
 
     <img class="generated-flower" src={heroFlowerImage} alt="" decoding="async" />
@@ -55,10 +73,6 @@ const heroFlowerImage = "/assets/illustrations/flower-sprig.png";
       <path d="M39 132c4-8 14-8 18-1 3 7-4 15-12 12-5-1-8-6-6-11Z" />
     </g>
   </svg>
-  </div>
-
-  <div class="love-note">
-    I love you <span>♡</span>
   </div>
 </section>
 

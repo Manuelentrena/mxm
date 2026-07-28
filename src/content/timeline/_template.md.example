@@ -1,30 +1,31 @@
 ---
-# 复制这个文件后，把文件名改成类似：02-date-place.md
-# 只要后缀是 .md，就会自动出现在时间线和照片墙里。
+# Copiá este archivo y cambiale el nombre a algo como: 02-fecha-lugar.md
+# Con que la extensión sea .md, ya aparece automáticamente en la línea de tiempo y en el muro de fotos.
 
-# 排序，数字越小越靠前。
+# Orden, cuanto más chico el número, más adelante aparece.
 order: 2
 
-# 页面显示日期，按你喜欢的格式写即可。
+# Fecha que se muestra en la página, escribila con el formato que prefieras.
 date: 2024.10.12
 
-# 时间线标题。
-title: 我们的某一天
+# Título de la línea de tiempo.
+title: Un día especial
 
-# 图片路径。把照片放到 public/assets/photos/ 后，这里写 /assets/photos/文件名.jpg
-image: /assets/photos/example.jpg
+# Rutas de las fotos. Poné la(s) foto(s) en src/assets/photos/ y acá escribí ../../assets/photos/nombre-archivo.jpg (una por línea, con guion)
+images:
+  - ../../assets/photos/example.jpg
 
-# 图片说明，用于无障碍访问，也方便后续维护。
-alt: 这张照片的简短描述
+# Descripción de la imagen, para accesibilidad y para mantenerlo más fácil.
+alt: Breve descripción de esta foto
 
-# 时间线卡片位置：left 或 right。
+# Posición de la tarjeta en la línea de tiempo: left o right.
 side: right
 
-# 照片倾斜样式，可选：
+# Estilo de inclinación de la foto, opciones:
 # tilt-left / tilt-left-soft / tilt-right / tilt-right-soft
 tilt: tilt-right-soft
 ---
 
-这里写这一天的故事。
+Escribí acá la historia de ese día.
 
-可以写一段，也可以写多段。照片墙会自动使用上面的 `image`、`date` 和 `title`，不用单独维护。
+Podés escribir un párrafo o varios. El muro de fotos usa automáticamente el `image`, `date` y `title` de arriba, no hace falta mantenerlo aparte.
